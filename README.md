@@ -1,5 +1,3 @@
-# turkce-oyunu
-Hasan Hüseyin Mert tarafından geliştirildi
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -9,7 +7,7 @@ Hasan Hüseyin Mert tarafından geliştirildi
     <style>
         :root { --primary: #1a1a1a; --secondary: #2d3436; --accent: #0984e3; --success: #00b894; --danger: #d63031; --ultra: #6c5ce7; }
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        #game-container { width: 92%; max-width: 500px; background: var(--secondary); padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); text-align: center; border: 1px solid #444; }
+        #game-container { width: 92%; max-width: 500px; background: var(--secondary); padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); text-align: center; border: 1px solid #444; position: relative; }
         .hidden { display: none; }
         .btn { border: none; padding: 15px; color: white; border-radius: 10px; font-size: 18px; cursor: pointer; margin: 8px 0; width: 100%; transition: 0.3s; font-weight: bold; }
         .btn-ultra { background: var(--ultra); animation: lightning 1s infinite; }
@@ -21,13 +19,29 @@ Hasan Hüseyin Mert tarafından geliştirildi
         .correct { background: var(--success) !important; border-color: #fff !important; }
         .wrong { background: var(--danger) !important; border-color: #fff !important; }
         #feedback { color: #fab1a0; font-weight: bold; margin-top: 10px; font-size: 16px; border: 1px dashed #fab1a0; padding: 5px; border-radius: 5px; }
+        
+        /* İmza Kısmı */
+        .developer-credit { 
+            margin-top: 20px; 
+            font-size: 13px; 
+            color: #888; 
+            font-style: italic;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 10px;
+        }
+        .dev-name {
+            color: #fdcb6e;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(253, 203, 110, 0.3);
+        }
     </style>
 </head>
 <body>
 
 <div id="game-container">
     <div id="start-screen">
-        <h1 style="color: var(--ultra); text-shadow: 0 0 10px rgba(108, 92, 231, 0.5);">Fiil Şimşeği 7. Sınıf</h1>
+        <h1 style="color: var(--ultra); text-shadow: 0 0 10px rgba(108, 92, 231, 0.5); margin-bottom: 5px;">Fiil Şimşeği 7. Sınıf</h1>
+        <p style="margin-top: 0; margin-bottom: 20px; color: #aaa;">Geliştirici: <span class="dev-name">Hasan Hüseyin Mert</span></p>
         <p>Hızını ve Bilgini Seç!</p>
         <button class="btn" style="background:var(--success)" onclick="startGame(30)">KOLAY (30sn)</button>
         <button class="btn" style="background:#e17055" onclick="startGame(20)">ORTA (20sn)</button>
@@ -48,6 +62,10 @@ Hasan Hüseyin Mert tarafından geliştirildi
         <h1>Görev Tamamlandı!</h1>
         <p id="final-score" style="font-size: 26px; color: var(--success);"></p>
         <button class="btn" style="background: var(--accent);" onclick="location.reload()">Tekrar Dene</button>
+    </div>
+
+    <div class="developer-credit">
+        Hasan Hüseyin Mert Tarafından Geliştirildi
     </div>
 </div>
 
@@ -139,7 +157,6 @@ Hasan Hüseyin Mert tarafından geliştirildi
             document.getElementById('feedback').classList.remove('hidden');
             document.getElementById('next-btn').classList.remove('hidden');
             
-            // Hata analizi için yine 30 saniye
             startTimer(30); 
         }
     }
@@ -158,3 +175,4 @@ Hasan Hüseyin Mert tarafından geliştirildi
 
 </body>
 </html>
+
