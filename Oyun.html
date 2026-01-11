@@ -6,8 +6,8 @@
     <title>7. Sınıf Fiiller - Ultra Maraton</title>
     <style>
         :root { --primary: #1a1a1a; --secondary: #2d3436; --accent: #0984e3; --success: #00b894; --danger: #d63031; --ultra: #6c5ce7; }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        #game-container { width: 92%; max-width: 500px; background: var(--secondary); padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); text-align: center; border: 1px solid #444; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; flex-direction: column; }
+        #game-container { width: 92%; max-width: 500px; background: var(--secondary); padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); text-align: center; border: 1px solid #444; position: relative; }
         .hidden { display: none; }
         .btn { border: none; padding: 15px; color: white; border-radius: 10px; font-size: 18px; cursor: pointer; margin: 8px 0; width: 100%; transition: 0.3s; font-weight: bold; }
         .btn-ultra { background: var(--ultra); animation: lightning 1s infinite; }
@@ -19,6 +19,17 @@
         .correct { background: var(--success) !important; border-color: #fff !important; }
         .wrong { background: var(--danger) !important; border-color: #fff !important; }
         #feedback { color: #fab1a0; font-weight: bold; margin-top: 10px; font-size: 16px; border: 1px dashed #fab1a0; padding: 5px; border-radius: 5px; }
+        
+        /* İSMİNİN YAZDIĞI ALT KISIM */
+        .dev-footer { 
+            margin-top: 20px; 
+            padding-top: 10px; 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+            color: #fdcb6e; 
+            font-weight: bold; 
+            font-size: 14px;
+            text-shadow: 0 0 5px rgba(253, 203, 110, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -46,6 +57,10 @@
         <h1>Görev Tamamlandı!</h1>
         <p id="final-score" style="font-size: 26px; color: var(--success);"></p>
         <button class="btn" style="background: var(--accent);" onclick="location.reload()">Tekrar Dene</button>
+    </div>
+
+    <div class="dev-footer">
+        Hasan Hüseyin Mert Tarafından Geliştirildi
     </div>
 </div>
 
@@ -81,16 +96,13 @@
         if (currentQ >= 15) return endGame();
         canClick = true;
         timeLeft = baseTime;
-        
         document.getElementById('timer').innerText = timeLeft;
         document.getElementById('progress').innerText = `Soru: ${currentQ + 1} / 15`;
         document.getElementById('question').innerText = questions[currentQ].q;
         document.getElementById('feedback').classList.add('hidden');
         document.getElementById('next-btn').classList.add('hidden');
-        
         const optionsDiv = document.getElementById('options');
         optionsDiv.innerHTML = '';
-        
         questions[currentQ].a.forEach((opt, index) => {
             const div = document.createElement('div');
             div.className = 'option';
@@ -99,7 +111,6 @@
             div.onclick = () => checkAnswer(index);
             optionsDiv.appendChild(div);
         });
-
         startTimer(baseTime);
     }
 
@@ -122,10 +133,8 @@
         if (!canClick) return;
         canClick = false;
         clearInterval(timerInterval);
-
         const correctIdx = questions[currentQ].c;
         const correctDiv = document.getElementById('opt-' + correctIdx);
-
         if (index === correctIdx) {
             document.getElementById('opt-' + index).classList.add('correct');
             score++;
@@ -133,11 +142,8 @@
         } else {
             if(index !== -1) document.getElementById('opt-' + index).classList.add('wrong');
             correctDiv.classList.add('correct');
-            
             document.getElementById('feedback').classList.remove('hidden');
             document.getElementById('next-btn').classList.remove('hidden');
-            
-            // Hata analizi için yine 30 saniye
             startTimer(30); 
         }
     }
