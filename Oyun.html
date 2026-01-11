@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>7. Sınıf Fiiller - Ultra Maraton V2</title>
+    <title>7. Sınıf Fiiller - Ultra Maraton V3</title>
     <style>
         :root { --primary: #1a1a1a; --secondary: #2d3436; --accent: #0984e3; --success: #00b894; --danger: #d63031; --ultra: #6c5ce7; --gold: #fdcb6e; }
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; flex-direction: column; }
@@ -24,6 +24,21 @@
         .market-btn { background: var(--gold); color: #2d3436; margin: 3px 0; font-size: 13px; padding: 8px; }
         
         .dev-footer { margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); color: var(--gold); font-weight: bold; font-size: 14px; }
+
+        /* Sertifika Stilleri */
+        #certificate-screen {
+            background: #fff; color: #333; padding: 30px; border-radius: 15px; box-shadow: 0 0 25px rgba(0,0,0,0.5);
+            max-width: 400px; width: 90%; margin: 20px auto; text-align: center; border: 5px solid var(--ultra);
+        }
+        .cert-title { font-size: 28px; color: var(--ultra); margin-bottom: 15px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        .cert-text { font-size: 18px; margin-bottom: 10px; }
+        .cert-player-name { font-size: 24px; font-weight: bold; color: var(--gold); margin-bottom: 15px; text-shadow: 1px 1px 3px rgba(253, 203, 110, 0.5); }
+        .cert-date { font-size: 14px; color: #777; margin-top: 20px; }
+        .signature { font-size: 16px; font-weight: bold; margin-top: 30px; color: var(--accent); }
+        .input-name { padding: 10px; margin-top: 15px; border-radius: 8px; border: 1px solid #ccc; width: 80%; max-width: 250px; font-size: 16px; }
+        .cert-btn { background: var(--accent); color: white; padding: 10px 20px; border-radius: 8px; margin-top: 15px; cursor: pointer; border: none; font-size: 16px; font-weight: bold; }
+        #happy-cat-gif { max-width: 150px; margin-top: 20px; border-radius: 10px; box-shadow: 0 0 15px rgba(255,255,0,0.7); }
+
     </style>
 </head>
 <body>
@@ -62,14 +77,34 @@
     <div id="result-screen" class="hidden">
         <h1 id="result-title">Oyun Bitti!</h1>
         <p id="final-score" style="font-size: 22px; color: var(--success);"></p>
-        <button class="btn" style="background: var(--accent);" onclick="location.reload()">Tekrar Başla</button>
+        
+        <div id="certificate-input-section" class="hidden">
+            <input type="text" id="player-name-input" class="input-name" placeholder="Adını Yaz">
+            <button class="cert-btn" onclick="showCertificate()">Sertifikayı Oluştur!</button>
+        </div>
+
+        <button class="btn" style="background: var(--accent); margin-top: 20px;" onclick="location.reload()">Tekrar Başla</button>
+    </div>
+
+    <div id="certificate-display-screen" class="hidden">
+        <div id="certificate-screen">
+            <h2 class="cert-title">BAŞARI SERTİFİKASI</h2>
+            <p class="cert-text">Bu sertifika, <span style="color:var(--ultra); font-weight:bold;">Fiil Şimşeği 7. Sınıf</span> maratonunu tamamlayan</p>
+            <p class="cert-player-name" id="cert-player-name-display"></p>
+            <p class="cert-text">adlı oyuncuya, gösterdiği üstün başarı ve Türkçe bilgisi için verilir!</p>
+            <p class="cert-text">Toplam doğru cevap: <span id="cert-score-display" style="font-weight:bold;"></span> / 25</p>
+            <p class="cert-text">Kazanılan puan: <span id="cert-points-display" style="font-weight:bold;"></span></p>
+            <p class="signature">Hasan Hüseyin Mert</p>
+            <p class="cert-date" id="cert-date-display"></p>
+            <img id="happy-cat-gif-display" src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp1eDF4N3o3MWYydTR2N212eDRrbG11bHB0d2h3YzRpYXV2bWRnZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ge8WA70GqJzJbLqQyF/giphy.gif" alt="Happy Cat" class="hidden" />
+        </div>
+        <button class="btn" style="background: var(--accent); margin-top: 20px;" onclick="location.reload()">Tekrar Başla</button>
     </div>
 
     <div class="dev-footer">Hasan Hüseyin Mert Tarafından Geliştirildi</div>
 </div>
 
 <script>
-    // 25 Soruya Tamamlandı (Bazı soruları senin için ekledim, istersen değiştirebilirsin)
     const questions = [
         { q: "'Baktı' fiili anlamca hangisidir?", a: ["İş", "Oluş", "Durum", "Yapı"], c: 2 },
         { q: "'Onu' kelimesini alan fiil türü?", a: ["Durum", "Oluş", "Kılış (İş)", "Basit"], c: 2 },
@@ -99,6 +134,7 @@
     ];
 
     let currentQ = 0, score = 0, points = 0, lives = 3, timeLeft = 0, timerInterval, baseTime = 0, canClick = true;
+    let isGameWon = false; // Oyuncunun oyunu kazanıp kazanmadığını takip etmek için
 
     function startGame(time) {
         baseTime = time;
@@ -126,7 +162,10 @@
     }
 
     function showQuestion() {
-        if (currentQ >= questions.length) return endGame("Tebrikler, Şampiyon!");
+        if (currentQ >= questions.length) {
+            isGameWon = true; // Tüm soruları bitirdi, oyunu kazandı
+            return endGame("Tebrikler, Şampiyon!");
+        }
         if (lives <= 0) return endGame("Canın Bitti!");
 
         canClick = true;
@@ -176,36 +215,5 @@
         if (index === correctIdx) {
             document.getElementById('opt-' + index).classList.add('correct');
             score++;
-            points += 5; // Her doğru 5 puan
-            updateStats();
-            setTimeout(() => { nextQuestion(); }, 800);
-        } else {
-            lives--; // Yanlışta can gider
-            updateStats();
-            if(index !== -1) document.getElementById('opt-' + index).classList.add('wrong');
-            document.getElementById('opt-' + correctIdx).classList.add('correct');
-            
-            if (lives > 0) {
-                document.getElementById('next-btn').classList.remove('hidden');
-                document.getElementById('next-btn').innerText = "HATANI ANLADIYSAN DEVAM ET ➔";
-            } else {
-                setTimeout(() => { endGame("Canın Bitti!"); }, 1000);
-            }
-        }
-    }
 
-    function nextQuestion() {
-        currentQ++;
-        showQuestion();
-    }
-
-    function endGame(title) {
-        document.getElementById('quiz-screen').classList.add('hidden');
-        document.getElementById('top-bar').classList.add('hidden');
-        document.getElementById('result-screen').classList.remove('hidden');
-        document.getElementById('result-title').innerText = title;
-        document.getElementById('final-score').innerText = `${questions.length} Soruda ${score} Doğru!\nToplam Puan: ${points}`;
-    }
-</script>
-</body>
-</html>
+                
