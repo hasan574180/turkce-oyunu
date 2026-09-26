@@ -13,20 +13,26 @@
     font-family:Arial,sans-serif;
 }
 
+html,body{
+    min-height:100%;
+}
+
 body{
     min-height:100vh;
     background:#050508;
     color:white;
     display:flex;
     justify-content:center;
-    align-items:center;
-    overflow:hidden;
+    align-items:flex-start;
+    overflow:auto;
+    padding:15px 0;
 }
 
 #bg{
     position:fixed;
     inset:0;
     z-index:0;
+    pointer-events:none;
 }
 
 .game{
@@ -34,6 +40,8 @@ body{
     z-index:2;
     width:92%;
     max-width:420px;
+    max-height:96vh;
+    overflow-y:auto;
     padding:20px;
     border-radius:18px;
     background:rgba(15,23,42,.9);
@@ -53,8 +61,6 @@ h1{
     font-size:13px;
     margin-bottom:15px;
 }
-
-/* GİRİŞ */
 
 .login{
     padding:14px;
@@ -114,8 +120,6 @@ input{
     cursor:pointer;
 }
 
-/* STATS */
-
 .stats{
     display:flex;
     justify-content:center;
@@ -133,8 +137,6 @@ input{
 .score{
     color:#ffe600;
 }
-
-/* BUTONLAR */
 
 button{
     cursor:pointer;
@@ -183,8 +185,6 @@ button{
 .selected{
     outline:2px solid white;
 }
-
-/* OYUN */
 
 .hud{
     display:flex;
@@ -242,8 +242,6 @@ button{
     background:rgba(255,0,127,.5)!important;
 }
 
-/* DÜKKAN */
-
 .shop-item{
     display:flex;
     justify-content:space-between;
@@ -266,6 +264,64 @@ button{
 .hide{
     display:none!important;
 }
+
+/* COMBO */
+
+.combo{
+    position:fixed;
+    left:50%;
+    top:18%;
+    transform:translateX(-50%) scale(.7);
+    color:#ff8c00;
+    font-size:38px;
+    font-weight:900;
+    text-shadow:
+        0 0 8px #ff4500,
+        0 0 18px #ff0000,
+        0 0 30px #ffe600;
+    z-index:20;
+    pointer-events:none;
+    opacity:0;
+}
+
+.combo.show{
+    animation:comboPop .8s ease-out;
+}
+
+@keyframes comboPop{
+
+    0%{
+        opacity:0;
+        transform:translateX(-50%) scale(.5);
+    }
+
+    30%{
+        opacity:1;
+        transform:translateX(-50%) scale(1.2);
+    }
+
+    70%{
+        opacity:1;
+        transform:translateX(-50%) scale(1);
+    }
+
+    100%{
+        opacity:0;
+        transform:translateX(-50%) scale(1.1);
+    }
+}
+
+@media(max-height:650px){
+
+    body{
+        padding:8px 0;
+    }
+
+    .game{
+        max-height:94vh;
+        padding:14px;
+    }
+}
 </style>
 </head>
 
@@ -273,9 +329,9 @@ button{
 
 <canvas id="bg"></canvas>
 
-<div class="game">
+<div id="combo" class="combo"></div>
 
-<!-- GMAIL -->
+<div class="game">
 
 <div class="login">
 
@@ -315,19 +371,17 @@ button{
 
 </div>
 
-<!-- STATS -->
-
 <div class="stats">
-    <div class="lives">
-        ❤️ <span id="lives">3</span>/6
-    </div>
 
-    <div class="score">
-        ⭐ <span id="score">30</span>
-    </div>
+<div class="lives">
+    ❤️ <span id="lives">3</span>/6
 </div>
 
-<!-- ANA MENÜ -->
+<div class="score">
+    ⭐ <span id="score">30</span>
+</div>
+
+</div>
 
 <div id="menu">
 
@@ -357,23 +411,20 @@ onclick="difficulty(4,this)">
 ⚡ FAST - 4 Saniye
 </button>
 
-<button class="btn start"
-onclick="startGame()">
+<button class="btn start" onclick="startGame()">
 OYUNA BAŞLA
 </button>
 
-<button class="btn shop"
-onclick="openShop()">
+<button class="btn shop" onclick="openShop()">
 🛒 CAN DÜKKANI
 </button>
 
 </div>
 
-<!-- OYUN -->
-
 <div id="game" class="hide">
 
 <div class="hud">
+
 <span>
 Soru <span id="qNo">1</span>/10
 </span>
@@ -381,6 +432,7 @@ Soru <span id="qNo">1</span>/10
 <span>
 ⏱️ <span id="time">30</span>
 </span>
+
 </div>
 
 <div id="category" class="category">
@@ -395,8 +447,6 @@ Soru
 
 </div>
 
-<!-- SHOP -->
-
 <div id="shop" class="hide">
 
 <h1>CAN DÜKKANI</h1>
@@ -406,18 +456,45 @@ Puanlarınla can satın al
 </div>
 
 <div class="shop-item">
-<span>❤️ +1 CAN<br><small>30 Puan</small></span>
-<button class="buy" onclick="buy(1,30)">Al</button>
+
+<span>
+❤️ +1 CAN
+<br>
+<small>30 Puan</small>
+</span>
+
+<button class="buy" onclick="buy(1,30)">
+Al
+</button>
+
 </div>
 
 <div class="shop-item">
-<span>❤️❤️ +2 CAN<br><small>60 Puan</small></span>
-<button class="buy" onclick="buy(2,60)">Al</button>
+
+<span>
+❤️❤️ +2 CAN
+<br>
+<small>60 Puan</small>
+</span>
+
+<button class="buy" onclick="buy(2,60)">
+Al
+</button>
+
 </div>
 
 <div class="shop-item">
-<span>❤️❤️❤️ +3 CAN<br><small>90 Puan</small></span>
-<button class="buy" onclick="buy(3,90)">Al</button>
+
+<span>
+❤️❤️❤️ +3 CAN
+<br>
+<small>90 Puan</small>
+</span>
+
+<button class="buy" onclick="buy(3,90)">
+Al
+</button>
+
 </div>
 
 <button class="btn start" onclick="menu()">
@@ -425,8 +502,6 @@ ANA MENÜ
 </button>
 
 </div>
-
-<!-- SON -->
 
 <div id="end" class="hide">
 
@@ -451,10 +526,6 @@ DÜKKAN
 </div>
 
 <script>
-
-/* =================================================
-   VERİLER
-================================================= */
 
 const questions=[
 
@@ -584,21 +655,17 @@ const MAX_LIVES=6;
 
 let lives=3;
 let score=30;
-
 let gmail=null;
-
 let questionIndex=0;
 let gameQuestions=[];
-
 let timeLimit=30;
 let timer=null;
 let timeLeft=0;
 let answering=true;
+let combo=0;
 
 
-/* =================================================
-   GMAIL SİSTEMİ
-================================================= */
+/* GMAIL */
 
 function saveKey(){
 
@@ -607,15 +674,9 @@ function saveKey(){
     return "turkce_avcisi_"+gmail;
 }
 
-
-/*
- * Sadece Gmail kayıtlıysa kaydet.
- */
 function save(){
 
-    if(!gmail){
-        return;
-    }
+    if(!gmail) return;
 
     const data={
         lives:lives,
@@ -628,15 +689,9 @@ function save(){
     );
 }
 
-
-/*
- * Gmail hesabının kayıtlı ilerlemesini yükle.
- */
 function load(){
 
-    if(!gmail){
-        return;
-    }
+    if(!gmail) return;
 
     const data=
         localStorage.getItem(saveKey());
@@ -677,7 +732,6 @@ function load(){
     }
 }
 
-
 function login(){
 
     const input=
@@ -686,14 +740,14 @@ function login(){
     const email=
         input.value.trim().toLowerCase();
 
-
     if(!email){
 
-        alert("Gmail adresini yazmalısın.");
+        alert(
+            "Gmail adresini yazmalısın."
+        );
 
         return;
     }
-
 
     if(!/^[^\s@]+@gmail\.com$/.test(email)){
 
@@ -704,94 +758,64 @@ function login(){
         return;
     }
 
-
     gmail=email;
 
-
-    /*
-     * Bu Gmail'i aktif kullanıcı olarak hatırla.
-     */
     localStorage.setItem(
         "turkce_avcisi_active",
         gmail
     );
 
-
-    /*
-     * Bu Gmail'in ilerlemesini yükle.
-     */
     load();
-
 
     document
         .getElementById("loginArea")
         .classList.add("hide");
 
-
     document
         .getElementById("accountArea")
         .classList.remove("hide");
-
 
     document
         .getElementById("accountEmail")
         .textContent=gmail;
 
-
     update();
 
     alert(
         "Giriş başarılı!\n\n"+
-        "İlerlemen bu Gmail hesabına kaydedilecek."
+        "İlerlemen bu tarayıcıda kaydedilecek."
     );
 }
 
-
 function logout(){
 
-    /*
-     * Kayıtlı ilerleme silinmez.
-     */
     gmail=null;
 
     localStorage.removeItem(
         "turkce_avcisi_active"
     );
 
-
-    /*
-     * Gmail olmadan oynanan oyun
-     * kaydedilmeyecek.
-     */
     lives=3;
     score=30;
-
+    combo=0;
 
     document
         .getElementById("loginArea")
         .classList.remove("hide");
 
-
     document
         .getElementById("accountArea")
         .classList.add("hide");
 
-
     document
         .getElementById("gmail")
         .value="";
-
 
     update();
 
     menu();
 }
 
-
-/*
- * Sayfa yeniden açıldığında son Gmail'i
- * otomatik olarak yükle.
- */
 function restore(){
 
     const active=
@@ -799,47 +823,38 @@ function restore(){
             "turkce_avcisi_active"
         );
 
-
     if(!active){
+
         update();
+
         return;
     }
 
-
-    if(
-        !/^[^\s@]+@gmail\.com$/.test(active)
-    ){
+    if(!/^[^\s@]+@gmail\.com$/.test(active)){
         return;
     }
-
 
     gmail=active;
 
     load();
 
-
     document
         .getElementById("loginArea")
         .classList.add("hide");
-
 
     document
         .getElementById("accountArea")
         .classList.remove("hide");
 
-
     document
         .getElementById("accountEmail")
         .textContent=gmail;
-
 
     update();
 }
 
 
-/* =================================================
-   ARAYÜZ
-================================================= */
+/* ARAYÜZ */
 
 function update(){
 
@@ -851,9 +866,7 @@ function update(){
 }
 
 
-/* =================================================
-   ZORLUK
-================================================= */
+/* ZORLUK */
 
 function difficulty(seconds,button){
 
@@ -861,7 +874,7 @@ function difficulty(seconds,button){
 
     document
         .querySelectorAll(
-            ".difficulty-stack button"
+            ".easy,.normal,.hard,.fast"
         )
         .forEach(x=>{
             x.classList.remove("selected");
@@ -871,9 +884,7 @@ function difficulty(seconds,button){
 }
 
 
-/* =================================================
-   OYUN
-================================================= */
+/* OYUN */
 
 function startGame(){
 
@@ -886,27 +897,20 @@ function startGame(){
         return;
     }
 
-
     gameQuestions=
         [...questions]
         .sort(()=>Math.random()-.5);
 
-
     questionIndex=0;
-
+    combo=0;
 
     show("game");
-
     hide("menu");
-
     hide("shop");
-
     hide("end");
-
 
     loadQuestion();
 }
-
 
 function loadQuestion(){
 
@@ -914,54 +918,44 @@ function loadQuestion(){
 
     answering=true;
 
-
     const q=
         gameQuestions[questionIndex];
-
 
     document.getElementById("qNo")
         .textContent=
         questionIndex+1;
 
-
     document.getElementById("category")
         .textContent=q.c;
-
 
     document.getElementById("question")
         .textContent=q.q;
 
-
     const area=
         document.getElementById("options");
 
-
     area.innerHTML="";
 
+    q.o.forEach((text,index)=>{
 
-    q.o.forEach(
-        (text,index)=>{
+        const button=
+            document.createElement("button");
 
-            const button=
-                document.createElement("button");
+        button.className="option";
 
-            button.className="option";
+        button.textContent=text;
 
-            button.textContent=text;
+        button.onclick=()=>{
+            answer(index,button);
+        };
 
-            button.onclick=
-                ()=>answer(index,button);
-
-            area.appendChild(button);
-        }
-    );
-
+        area.appendChild(button);
+    });
 
     timeLeft=timeLimit;
 
     document.getElementById("time")
         .textContent=timeLeft;
-
 
     timer=setInterval(()=>{
 
@@ -969,7 +963,6 @@ function loadQuestion(){
 
         document.getElementById("time")
             .textContent=timeLeft;
-
 
         if(timeLeft<=0){
 
@@ -982,31 +975,53 @@ function loadQuestion(){
 }
 
 
+/* COMBO */
+
+function showCombo(){
+
+    if(combo<2) return;
+
+    const element=
+        document.getElementById("combo");
+
+    element.textContent=
+        "🔥 COMBO "+combo+"! +10 PUAN 🔥";
+
+    element.classList.remove("show");
+
+    void element.offsetWidth;
+
+    element.classList.add("show");
+}
+
+
+/* CEVAP */
+
 function answer(index,button){
 
-    if(!answering){
-        return;
-    }
-
+    if(!answering) return;
 
     answering=false;
 
     clearInterval(timer);
 
-
     const q=
         gameQuestions[questionIndex];
 
-
     const buttons=
         document.querySelectorAll(".option");
-
 
     if(index===q.a){
 
         button.classList.add("correct");
 
+        combo++;
+
         score+=10+timeLeft;
+
+        showCombo();
+
+        score+=10;
 
     }else{
 
@@ -1018,19 +1033,13 @@ function answer(index,button){
         }
 
         lives--;
-    }
 
+        combo=0;
+    }
 
     update();
 
-    /*
-     * EN ÖNEMLİ KISIM:
-     *
-     * Gmail varsa kaydet.
-     * Gmail yoksa save() hiçbir şey yapmaz.
-     */
     save();
-
 
     setTimeout(()=>{
 
@@ -1041,9 +1050,7 @@ function answer(index,button){
             return;
         }
 
-
         questionIndex++;
-
 
         if(
             questionIndex>=gameQuestions.length
@@ -1062,33 +1069,27 @@ function answer(index,button){
 
 function timeout(){
 
-    if(!answering){
-        return;
-    }
+    if(!answering) return;
 
     answering=false;
-
 
     const q=
         gameQuestions[questionIndex];
 
-
     const buttons=
         document.querySelectorAll(".option");
-
 
     if(buttons[q.a]){
         buttons[q.a]
             .classList.add("correct");
     }
 
-
     lives--;
+    combo=0;
 
     update();
 
     save();
-
 
     setTimeout(()=>{
 
@@ -1099,9 +1100,7 @@ function timeout(){
             return;
         }
 
-
         questionIndex++;
-
 
         if(
             questionIndex>=gameQuestions.length
@@ -1118,9 +1117,7 @@ function timeout(){
 }
 
 
-/* =================================================
-   BİTİŞ
-================================================= */
+/* BİTİŞ */
 
 function finish(noLives){
 
@@ -1128,91 +1125,81 @@ function finish(noLives){
 
     save();
 
-
     hide("game");
-
     show("end");
-
 
     if(noLives){
 
-        document.getElementById("endTitle")
+        document
+            .getElementById("endTitle")
             .textContent=
             "CANLARIN BİTTİ!";
 
-        document.getElementById("endText")
+        document
+            .getElementById("endText")
             .textContent=
             "Dükkandan can alarak devam edebilirsin.";
 
     }else{
 
-        document.getElementById("endTitle")
+        document
+            .getElementById("endTitle")
             .textContent=
             "TEBRİKLER!";
 
-        document.getElementById("endText")
+        document
+            .getElementById("endText")
             .textContent=
             "10 soruyu tamamladın!";
     }
 }
 
 
-/* =================================================
-   DÜKKAN
-================================================= */
+/* DÜKKAN */
 
 function buy(amount,cost){
 
     if(lives+amount>MAX_LIVES){
 
-        alert("En fazla 6 can olabilir.");
+        alert(
+            "En fazla 6 can olabilir."
+        );
 
         return;
     }
-
 
     if(score<cost){
 
-        alert("Yeterli puanın yok.");
+        alert(
+            "Yeterli puanın yok."
+        );
 
         return;
     }
 
-
     score-=cost;
-
     lives+=amount;
-
 
     update();
 
-    /*
-     * Gmail varsa satın alma da kaydedilir.
-     */
     save();
 }
-
 
 function openShop(){
 
     hide("menu");
-
     hide("game");
-
     hide("end");
 
     show("shop");
 }
-
 
 function menu(){
 
     clearInterval(timer);
 
     hide("game");
-
     hide("shop");
-
     hide("end");
 
     show("menu");
@@ -1221,9 +1208,7 @@ function menu(){
 }
 
 
-/* =================================================
-   YARDIMCI
-================================================= */
+/* YARDIMCI */
 
 function show(id){
 
@@ -1232,7 +1217,6 @@ function show(id){
         .classList
         .remove("hide");
 }
-
 
 function hide(id){
 
@@ -1243,9 +1227,7 @@ function hide(id){
 }
 
 
-/* =================================================
-   ENTER = GMAİL GİRİŞ
-================================================= */
+/* ENTER */
 
 document
     .getElementById("gmail")
@@ -1261,9 +1243,7 @@ document
     );
 
 
-/* =================================================
-   ARKA PLAN
-================================================= */
+/* ARKA PLAN */
 
 const canvas=
     document.getElementById("bg");
@@ -1273,7 +1253,6 @@ const ctx=
 
 let particles=[];
 
-
 function resize(){
 
     canvas.width=
@@ -1282,7 +1261,6 @@ function resize(){
     canvas.height=
         window.innerHeight;
 }
-
 
 function createParticles(){
 
@@ -1299,10 +1277,10 @@ function createParticles(){
             r:Math.random()*3+1,
 
             speed:Math.random()*1.5+.3
+
         });
     }
 }
-
 
 function animate(){
 
@@ -1313,7 +1291,6 @@ function animate(){
         canvas.height
     );
 
-
     ctx.fillStyle="#050508";
 
     ctx.fillRect(
@@ -1323,21 +1300,20 @@ function animate(){
         canvas.height
     );
 
-
     particles.forEach(p=>{
 
         p.y+=p.speed;
 
-
         if(p.y>canvas.height){
-            p.y=-5;
-            p.x=Math.random()*canvas.width;
-        }
 
+            p.y=-5;
+
+            p.x=
+                Math.random()*canvas.width;
+        }
 
         ctx.fillStyle=
             "rgba(0,242,254,.35)";
-
 
         ctx.beginPath();
 
@@ -1352,10 +1328,8 @@ function animate(){
         ctx.fill();
     });
 
-
     requestAnimationFrame(animate);
 }
-
 
 window.addEventListener(
     "resize",
@@ -1365,20 +1339,11 @@ window.addEventListener(
     }
 );
 
-
 resize();
-
 createParticles();
-
 animate();
 
-
-/* =================================================
-   BAŞLAT
-================================================= */
-
 restore();
-
 update();
 
 </script>
